@@ -715,13 +715,14 @@ Sortable.prototype = /** @lends Sortable.prototype */ {
 		}
 
 		try {
-			_nextTick(function () {
-				if (document.selection) {
+			
+			if (document.selection) {
+				_nextTick(() => {
 					document.selection.empty();
-				} else {
-					window.getSelection().removeAllRanges();
-				}
-			});
+				});
+			} else if (this.nativeDraggable) {
+				window.getSelection().removeAllRanges();
+			}
 		} catch (err) {
 		}
 	},
@@ -995,6 +996,8 @@ Sortable.prototype = /** @lends Sortable.prototype */ {
 		on(document, 'selectstart', _this);
 
 		moved = true;
+
+		window.getSelection().removeAllRanges();
 
 		if (Safari) {
 			css(document.body, 'user-select', 'none');
